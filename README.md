@@ -14,7 +14,7 @@
 	
 	client = quakealert.QAClient('配信サーバーのIPアドレス', ポート番号) 
 
-クライアント側で複数のIPアドレスが設定されている場合に、そのどれかを選ぶ必要がある場合は以下の記述が可能です。
+クライアント側で複数のIPアドレスが設定されていて、そのどれかを選ぶ必要がある場合は以下の記述が可能です。
 
 	client = quakealert.QAClient('配信サーバーのIPアドレス', ポート番号,
              srcaddr='接続元のIPアドレス')
@@ -36,7 +36,7 @@
 
 alertオブジェクトには以下のメソッドがあります。
 
-* alert.timestamp(): EEWのタイムスタンプを出力します
+* alert.timestamp(): EEWのタイムスタンプを出力
 * alert.is_effective(): 有効電文なら真
 * alert.is_test_message(): テスト電文なら真
 * alert.is_decode_message(): デコード電文なら真
@@ -51,11 +51,11 @@ alertオブジェクトには以下のメソッドがあります。
 		buf = alert.code_message()
 		pmesg = quakealert.Parser(alert.message_type, buf)
 
-pmesgオブジェクトには以下のメソッドがります。
+pmesgオブジェクトには以下のメソッドがあります。
 
 * pmesg.is_first(): 第一報なら真
 * pmesg.is_last(): 最終報なら真
-* p.dump(): 辞書形式のオブジェクトを出力します
+* pmesg.dump(): 辞書形式のオブジェクトを出力します
 
 dump()で出力される辞書形式のオブジェクトdの構造は以下の通りです。
 
@@ -76,6 +76,44 @@ dump()で出力される辞書形式のオブジェクトdの構造は以下の�
 * d['rc'] 				rc情報（未実装）
 * d['ebi'] 				ebi情報（未実装）
 
+====
+## サンプルアプリケーション: qa-demo.py
+
+quakealertライブラリを使ったシンプルなクライアントのサンプルです。
+
+### 機能
+以下の機能があります。
+
+* EEW配信サーバーにつなげる
+* EEW配信サーバーからのヘルスチェックリクエストに答えてコネクションを維持する
+* 電文がきたら処理して適当にログファイルに書き出す
+
+### 使い方
+配信サーバーと接続できる設定がされたPCで
+
+	def daemon_process():
+    	client = quakealert.QAClient('<server IP addr>', <server port>) 
+
+部分の配信サーバーのIPアドレスとポート番号を埋めて実行してください。
+
+デーモン化して/tmp以下にログファイルを出力します。標準出力にはなにもださないので
+
+	/tmp/qa-demo.out
+	
+を参照してください。
+
+	Wed, 30 Oct 2013 21:15:46 INFO     connected
+	Wed, 30 Oct 2013 21:16:00 INFO     Health Check request: acked
+
+と出ていればサーバーとのコネクションが確立されています。接続できないときはローカルの設定および配信サービス側の設定をご確認ください。
+
+### 関連ライブラリ
+
+DaemonContextライブラリが無いときはpipもしくはeasy_installで"python-daemon"をインストールした上でご利用ください。
+
+
+
+====
 ## 動作環境
 python2.7での動作を確認しています。
 
